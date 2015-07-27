@@ -32,6 +32,8 @@ namespace SharpTrooper.Core
             _proxyName = proxyName;
         }
 
+        #region Private
+
         private string Request(string url, HttpMethod httpMethod)
         {
             return Request(url, httpMethod, null, false);
@@ -77,15 +79,7 @@ namespace SharpTrooper.Core
         }
 
 
-        /// <summary>
-        /// get a specific resource by url
-        /// </summary>
-        public T GetSingleByUrl<T>(string url) where T : SharpEntity
-        {
-            string json = Request(url, HttpMethod.GET);
-            T swapiResponse = JsonConvert.DeserializeObject<T>(json);
-            return swapiResponse;
-        }
+        
 
         private T GetSingle<T>(string endpoint, Dictionary<string, string> parameters = null) where T : SharpEntity
         {
@@ -143,6 +137,32 @@ namespace SharpTrooper.Core
             return result;
         }
 
+        private SharpEntityResults<T> GetAllPaginated<T>(string entityName, string pageNumber = "1") where T : SharpEntity
+        {
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("page", pageNumber);
+
+            SharpEntityResults<T> result = GetMultiple<T>(entityName, parameters);
+
+            result.nextPageNo = String.IsNullOrEmpty(result.next) ? null : GetQueryParameters(result.next)["page"];
+            result.previousPageNo = String.IsNullOrEmpty(result.previous) ? null : GetQueryParameters(result.previous)["page"];
+
+            return result;
+        }
+
+        #endregion
+
+        #region Public
+
+        /// <summary>
+        /// get a specific resource by url
+        /// </summary>
+        public T GetSingleByUrl<T>(string url) where T : SharpEntity
+        {
+            string json = Request(url, HttpMethod.GET);
+            T swapiResponse = JsonConvert.DeserializeObject<T>(json);
+            return swapiResponse;
+        }
 
         // People
         /// <summary>
@@ -158,13 +178,7 @@ namespace SharpTrooper.Core
         /// </summary>
         public SharpEntityResults<People> GetAllPeople(string pageNumber = "1")
         {
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("page", pageNumber);
-
-            SharpEntityResults<People> result = GetMultiple<People>("/people/", parameters);
-
-            result.nextPageNo = String.IsNullOrEmpty(result.next) ? null : GetQueryParameters(result.next)["page"];
-            result.previousPageNo = String.IsNullOrEmpty(result.previous) ? null : GetQueryParameters(result.previous)["page"];
+            SharpEntityResults<People> result = GetAllPaginated<People>("/people/", pageNumber);
 
             return result;
         }
@@ -181,15 +195,9 @@ namespace SharpTrooper.Core
         /// <summary>
         /// get all the film resources
         /// </summary>
-        public SharpEntityResults<Film> GetAllFilm(string pageNumber = "1")
+        public SharpEntityResults<Film> GetAllFilms(string pageNumber = "1")
         {
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("page", pageNumber);
-
-            SharpEntityResults<Film> result = GetMultiple<Film>("/films/", parameters);
-
-            result.nextPageNo = String.IsNullOrEmpty(result.next) ? null : GetQueryParameters(result.next)["page"];
-            result.previousPageNo = String.IsNullOrEmpty(result.previous) ? null : GetQueryParameters(result.previous)["page"];
+            SharpEntityResults<Film> result = GetAllPaginated<Film>("/films/", pageNumber);
 
             return result;
         }
@@ -206,22 +214,16 @@ namespace SharpTrooper.Core
         /// <summary>
         /// get all the planet resources
         /// </summary>
-        public SharpEntityResults<Planet> GetAllPlanet(string pageNumber = "1")
+        public SharpEntityResults<Planet> GetAllPlanets(string pageNumber = "1")
         {
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("page", pageNumber);
-
-            SharpEntityResults<Planet> result = GetMultiple<Planet>("/planets/", parameters);
-
-            result.nextPageNo = String.IsNullOrEmpty(result.next) ? null : GetQueryParameters(result.next)["page"];
-            result.previousPageNo = String.IsNullOrEmpty(result.previous) ? null : GetQueryParameters(result.previous)["page"];
+            SharpEntityResults<Planet> result = GetAllPaginated<Planet>("/planets/", pageNumber);
 
             return result;
         }
 
         // Specie
         /// <summary>
-        /// get a specific planet resource
+        /// get a specific specie resource
         /// </summary>
         public Specie GetSpecie(string id)
         {
@@ -229,24 +231,18 @@ namespace SharpTrooper.Core
         }
 
         /// <summary>
-        /// get all the planet resources
+        /// get all the specie resources
         /// </summary>
-        public SharpEntityResults<Specie> GetAllSpecie(string pageNumber = "1")
+        public SharpEntityResults<Specie> GetAllSpecies(string pageNumber = "1")
         {
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("page", pageNumber);
-
-            SharpEntityResults<Specie> result = GetMultiple<Specie>("/species/", parameters);
-
-            result.nextPageNo = String.IsNullOrEmpty(result.next) ? null : GetQueryParameters(result.next)["page"];
-            result.previousPageNo = String.IsNullOrEmpty(result.previous) ? null : GetQueryParameters(result.previous)["page"];
+            SharpEntityResults<Specie> result = GetAllPaginated<Specie>("/species/", pageNumber);
 
             return result;
         }
 
         // Starship
         /// <summary>
-        /// get a specific planet resource
+        /// get a specific starship resource
         /// </summary>
         public Starship GetStarship(string id)
         {
@@ -254,24 +250,18 @@ namespace SharpTrooper.Core
         }
 
         /// <summary>
-        /// get all the planet resources
+        /// get all the starship resources
         /// </summary>
-        public SharpEntityResults<Starship> GetAllStarship(string pageNumber = "1")
+        public SharpEntityResults<Starship> GetAllStarships(string pageNumber = "1")
         {
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("page", pageNumber);
-
-            SharpEntityResults<Starship> result = GetMultiple<Starship>("/starships/", parameters);
-
-            result.nextPageNo = String.IsNullOrEmpty(result.next) ? null : GetQueryParameters(result.next)["page"];
-            result.previousPageNo = String.IsNullOrEmpty(result.previous) ? null : GetQueryParameters(result.previous)["page"];
+            SharpEntityResults<Starship> result = GetAllPaginated<Starship>("/starships/", pageNumber);
 
             return result;
         }
 
         // Vehicle
         /// <summary>
-        /// get a specific planet resource
+        /// get a specific vehicle resource
         /// </summary>
         public Vehicle GetVehicle(string id)
         {
@@ -279,19 +269,15 @@ namespace SharpTrooper.Core
         }
 
         /// <summary>
-        /// get all the planet resources
+        /// get all the vehicle resources
         /// </summary>
-        public SharpEntityResults<Vehicle> GetAllVehicle(string pageNumber = "1")
+        public SharpEntityResults<Vehicle> GetAllVehicles(string pageNumber = "1")
         {
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("page", pageNumber);
-
-            SharpEntityResults<Vehicle> result = GetMultiple<Vehicle>("/vehicles/", parameters);
-
-            result.nextPageNo = String.IsNullOrEmpty(result.next) ? null : GetQueryParameters(result.next)["page"];
-            result.previousPageNo = String.IsNullOrEmpty(result.previous) ? null : GetQueryParameters(result.previous)["page"];
+            SharpEntityResults<Vehicle> result = GetAllPaginated<Vehicle>("/vehicles/", pageNumber);
 
             return result;
         }
+
+        #endregion
     }
 }
