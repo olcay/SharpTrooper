@@ -1,6 +1,6 @@
 # SharpTrooper
 
-A C# helper library for [SWAPI](www.swapi.co) - the Star Wars API
+A C# helper library for [SWAPI](https://www.swapi.co) - the Star Wars API
 
 ## Basic Usage
 
