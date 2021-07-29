@@ -1,14 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using SharpTrooper.Entities;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.Collections.Specialized;
+using System.IO;
 using System.Net;
 using System.Text;
-using System.IO;
-using SharpTrooper.Entities;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Collections.Specialized;
 
 namespace SharpTrooper.Core
 {
@@ -20,8 +17,8 @@ namespace SharpTrooper.Core
             POST
         }
 
-        private string apiUrl = "http://swapi.co/api";
-        private string _proxyName = null;
+        private readonly string apiUrl = "http://swapi.dev/api";
+        private readonly string _proxyName;
 
         public SharpTrooperCore()
         {

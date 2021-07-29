@@ -1,6 +1,6 @@
 # SharpTrooper
 
-A C# helper library for [SWAPI](https://www.swapi.co) - the Star Wars API
+A C# helper library for [SWAPI](https://swapi.dev) - the Star Wars API
 
 ## Basic Usage
 
@@ -19,7 +19,7 @@ var planets = core.GetAllPlanets();
 var resourceFromUrl = core.GetSingleByUrl<People>(planet.residents[0]);
 ```
 
-For more info, visit the documentation of SWAPI: [SWAPI/Documentation](http://swapi.co/documentation)
+For more info, visit the documentation of SWAPI: [SWAPI/Documentation](https://swapi.dev/documentation)
 
 or my personal blog post:
 [Otomatik Mühendis](http://otomatikmuhendis.com/2015/07/27/the-star-wars-api/)
