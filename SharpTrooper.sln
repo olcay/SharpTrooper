@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31507.150
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpTrooper", "SharpTrooper.csproj", "{64FA6A89-9042-42A7-A331-A8D6FBC79340}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpTrooper", "SharpTrooper.csproj", "{64FA6A89-9042-42A7-A331-A8D6FBC79340}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
