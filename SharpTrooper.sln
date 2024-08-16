@@ -1,9 +1,10 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31507.150
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpTrooper", "SharpTrooper.csproj", "{64FA6A89-9042-42A7-A331-A8D6FBC79340}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpTrooper.Tests", "SharpTrooper.Tests\SharpTrooper.Tests.csproj", "{5BFFD3DC-8045-416A-A3DF-A68AB453BF89}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpTrooper", "SharpTrooper\SharpTrooper.csproj", "{120A6FA4-2085-4185-8B2D-306C4769F6F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +12,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{64FA6A89-9042-42A7-A331-A8D6FBC79340}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64FA6A89-9042-42A7-A331-A8D6FBC79340}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64FA6A89-9042-42A7-A331-A8D6FBC79340}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64FA6A89-9042-42A7-A331-A8D6FBC79340}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BFFD3DC-8045-416A-A3DF-A68AB453BF89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BFFD3DC-8045-416A-A3DF-A68AB453BF89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BFFD3DC-8045-416A-A3DF-A68AB453BF89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BFFD3DC-8045-416A-A3DF-A68AB453BF89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{120A6FA4-2085-4185-8B2D-306C4769F6F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{120A6FA4-2085-4185-8B2D-306C4769F6F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{120A6FA4-2085-4185-8B2D-306C4769F6F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{120A6FA4-2085-4185-8B2D-306C4769F6F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

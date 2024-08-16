@@ -42,7 +42,7 @@ namespace SharpTrooper.Core
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.Method = httpMethod.ToString();
 
-            if (!String.IsNullOrEmpty(_proxyName))
+            if (!string.IsNullOrEmpty(_proxyName))
             {
                 httpWebRequest.Proxy = new WebProxy(_proxyName, 80);
                 httpWebRequest.Proxy.Credentials = CredentialCache.DefaultCredentials;
@@ -50,7 +50,7 @@ namespace SharpTrooper.Core
 
             if (data != null)
             {
-                byte[] bytes = UTF8Encoding.UTF8.GetBytes(data.ToString());
+                byte[] bytes = Encoding.UTF8.GetBytes(data.ToString());
                 httpWebRequest.ContentLength = bytes.Length;
                 Stream stream = httpWebRequest.GetRequestStream();
                 stream.Write(bytes, 0, bytes.Length);
@@ -74,9 +74,6 @@ namespace SharpTrooper.Core
             }
             return parameters.Remove(parameters.Length - 1, 1).ToString();
         }
-
-
-        
 
         private T GetSingle<T>(string endpoint, Dictionary<string, string> parameters = null) where T : SharpEntity
         {
