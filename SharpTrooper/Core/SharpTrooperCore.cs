@@ -3,71 +3,35 @@ using SharpTrooper.Entities;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SharpTrooper.Core
 {
-    public class SharpTrooperCore
+    public class SharpTrooperCore(IHttpClientFactory clientFactory)
     {
-        private enum HttpMethod
-        {
-            GET,
-            POST
-        }
-
-        private readonly string apiUrl = "http://swapi.dev/api";
-        private readonly string _proxyName;
-
-        public SharpTrooperCore()
-        {
-        }
-
-        public SharpTrooperCore(string proxyName)
-        {
-            _proxyName = proxyName;
-        }
+        private readonly string apiUrl = "http://swapi.dev/api"; // could be placed into config file
 
         #region Private
 
-        private string Request(string url, HttpMethod httpMethod)
+        private async Task<string> RequestAsync(string url)
         {
-            return Request(url, httpMethod, null, false);
-        }
+            var client = clientFactory.CreateClient();
 
-        private string Request(string url, HttpMethod httpMethod, string data, bool isProxyEnabled)
-        {
-            string result = string.Empty;
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-            httpWebRequest.Method = httpMethod.ToString();
+            HttpResponseMessage response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url));
 
-            if (!string.IsNullOrEmpty(_proxyName))
+            if (!response.IsSuccessStatusCode)
             {
-                httpWebRequest.Proxy = new WebProxy(_proxyName, 80);
-                httpWebRequest.Proxy.Credentials = CredentialCache.DefaultCredentials;
+                throw new Exception($"Error: request returned: {response.StatusCode}");
             }
 
-            if (data != null)
-            {
-                byte[] bytes = Encoding.UTF8.GetBytes(data.ToString());
-                httpWebRequest.ContentLength = bytes.Length;
-                Stream stream = httpWebRequest.GetRequestStream();
-                stream.Write(bytes, 0, bytes.Length);
-                stream.Dispose();
-            }
-
-            HttpWebResponse httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            StreamReader reader = new StreamReader(httpWebResponse.GetResponseStream());
-            result = reader.ReadToEnd();
-            reader.Dispose();
-
-            return result;
+            return await response.Content.ReadAsStringAsync();
         }
 
-        private string SerializeDictionary(Dictionary<string, string> dictionary)
+        private static string SerializeDictionary(Dictionary<string, string> dictionary)
         {
-            StringBuilder parameters = new StringBuilder();
+            StringBuilder parameters = new();
             foreach (KeyValuePair<string, string> keyValuePair in dictionary)
             {
                 parameters.Append(keyValuePair.Key + "=" + keyValuePair.Value + "&");
@@ -75,7 +39,7 @@ namespace SharpTrooper.Core
             return parameters.Remove(parameters.Length - 1, 1).ToString();
         }
 
-        private T GetSingle<T>(string endpoint, Dictionary<string, string> parameters = null) where T : SharpEntity
+        private async Task<T> GetSingleAsync<T>(string endpoint, Dictionary<string, string> parameters = null) where T : SharpEntity
         {
             string serializedParameters = "";
             if (parameters != null)
@@ -83,15 +47,15 @@ namespace SharpTrooper.Core
                 serializedParameters = "?" + SerializeDictionary(parameters);
             }
 
-            return GetSingleByUrl<T>(url: string.Format("{0}{1}{2}", apiUrl, endpoint, serializedParameters));
+            return await GetSingleByUrlAsync<T>(url: string.Format("{0}{1}{2}", apiUrl, endpoint, serializedParameters));
         }
 
-        private SharpEntityResults<T> GetMultiple<T>(string endpoint) where T : SharpEntity
+        private async Task<SharpEntityResults<T>> GetMultipleAsync<T>(string endpoint) where T : SharpEntity
         {
-            return GetMultiple<T>(endpoint, null);
+            return await GetMultipleAsync<T>(endpoint, null);
         }
 
-        private SharpEntityResults<T> GetMultiple<T>(string endpoint, Dictionary<string, string> parameters) where T : SharpEntity
+        private async Task<SharpEntityResults<T>> GetMultipleAsync<T>(string endpoint, Dictionary<string, string> parameters) where T : SharpEntity
         {
             string serializedParameters = "";
             if (parameters != null)
@@ -99,14 +63,14 @@ namespace SharpTrooper.Core
                 serializedParameters = "?" + SerializeDictionary(parameters);
             }
 
-            string json = Request(string.Format("{0}{1}{2}", apiUrl, endpoint, serializedParameters), HttpMethod.GET);
+            string json = await RequestAsync(string.Format("{0}{1}{2}", apiUrl, endpoint, serializedParameters));
             SharpEntityResults<T> swapiResponse = JsonConvert.DeserializeObject<SharpEntityResults<T>>(json);
             return swapiResponse;
         }
 
         private NameValueCollection GetQueryParameters(string dataWithQuery)
         {
-            NameValueCollection result = new NameValueCollection();
+            NameValueCollection result = [];
             string[] parts = dataWithQuery.Split('?');
             if (parts.Length > 0)
             {
@@ -131,15 +95,17 @@ namespace SharpTrooper.Core
             return result;
         }
 
-        private SharpEntityResults<T> GetAllPaginated<T>(string entityName, string pageNumber = "1") where T : SharpEntity
+        private async Task<SharpEntityResults<T>> GetAllPaginatedAsync<T>(string entityName, string pageNumber = "1") where T : SharpEntity
         {
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("page", pageNumber);
+            Dictionary<string, string> parameters = new()
+            {
+                { "page", pageNumber }
+            };
 
-            SharpEntityResults<T> result = GetMultiple<T>(entityName, parameters);
+            SharpEntityResults<T> result = await GetMultipleAsync<T>(entityName, parameters);
 
-            result.nextPageNo = String.IsNullOrEmpty(result.next) ? null : GetQueryParameters(result.next)["page"];
-            result.previousPageNo = String.IsNullOrEmpty(result.previous) ? null : GetQueryParameters(result.previous)["page"];
+            result.nextPageNo = string.IsNullOrEmpty(result.next) ? null : GetQueryParameters(result.next)["page"];
+            result.previousPageNo = string.IsNullOrEmpty(result.previous) ? null : GetQueryParameters(result.previous)["page"];
 
             return result;
         }
@@ -151,9 +117,9 @@ namespace SharpTrooper.Core
         /// <summary>
         /// get a specific resource by url
         /// </summary>
-        public T GetSingleByUrl<T>(string url) where T : SharpEntity
+        public async Task<T> GetSingleByUrlAsync<T>(string url) where T : SharpEntity
         {
-            string json = Request(url, HttpMethod.GET);
+            string json = await RequestAsync(url);
             T swapiResponse = JsonConvert.DeserializeObject<T>(json);
             return swapiResponse;
         }
@@ -162,17 +128,17 @@ namespace SharpTrooper.Core
         /// <summary>
         /// get a specific people resource
         /// </summary>
-        public People GetPeople(string id)
+        public async Task<People> GetPeople(string id)
         {
-            return GetSingle<People>("/people/" + id);
+            return await GetSingleAsync<People>("/people/" + id);
         }
 
         /// <summary>
         /// get all the people resources
         /// </summary>
-        public SharpEntityResults<People> GetAllPeople(string pageNumber = "1")
+        public async Task<SharpEntityResults<People>> GetAllPeopleAsync(string pageNumber = "1")
         {
-            SharpEntityResults<People> result = GetAllPaginated<People>("/people/", pageNumber);
+            SharpEntityResults<People> result = await GetAllPaginatedAsync<People>("/people/", pageNumber);
 
             return result;
         }
@@ -181,17 +147,17 @@ namespace SharpTrooper.Core
         /// <summary>
         /// get a specific film resource
         /// </summary>
-        public Film GetFilm(string id)
+        public async Task<Film> GetFilm(string id)
         {
-            return GetSingle<Film>("/films/" + id);
+            return await GetSingleAsync<Film>("/films/" + id);
         }
 
         /// <summary>
         /// get all the film resources
         /// </summary>
-        public SharpEntityResults<Film> GetAllFilms(string pageNumber = "1")
+        public async Task<SharpEntityResults<Film>> GetAllFilmsAsync(string pageNumber = "1")
         {
-            SharpEntityResults<Film> result = GetAllPaginated<Film>("/films/", pageNumber);
+            SharpEntityResults<Film> result = await GetAllPaginatedAsync<Film>("/films/", pageNumber);
 
             return result;
         }
@@ -200,17 +166,17 @@ namespace SharpTrooper.Core
         /// <summary>
         /// get a specific planet resource
         /// </summary>
-        public Planet GetPlanet(string id)
+        public async Task<Planet> GetPlanet(string id)
         {
-            return GetSingle<Planet>("/planets/" + id);
+            return await GetSingleAsync<Planet>("/planets/" + id);
         }
 
         /// <summary>
         /// get all the planet resources
         /// </summary>
-        public SharpEntityResults<Planet> GetAllPlanets(string pageNumber = "1")
+        public async Task<SharpEntityResults<Planet>> GetAllPlanetsAsync(string pageNumber = "1")
         {
-            SharpEntityResults<Planet> result = GetAllPaginated<Planet>("/planets/", pageNumber);
+            SharpEntityResults<Planet> result = await GetAllPaginatedAsync<Planet>("/planets/", pageNumber);
 
             return result;
         }
@@ -219,17 +185,17 @@ namespace SharpTrooper.Core
         /// <summary>
         /// get a specific specie resource
         /// </summary>
-        public Specie GetSpecie(string id)
+        public async Task<Specie> GetSpecie(string id)
         {
-            return GetSingle<Specie>("/species/" + id);
+            return await GetSingleAsync<Specie>("/species/" + id);
         }
 
         /// <summary>
         /// get all the specie resources
         /// </summary>
-        public SharpEntityResults<Specie> GetAllSpecies(string pageNumber = "1")
+        public async Task<SharpEntityResults<Specie>> GetAllSpeciesAsync(string pageNumber = "1")
         {
-            SharpEntityResults<Specie> result = GetAllPaginated<Specie>("/species/", pageNumber);
+            SharpEntityResults<Specie> result = await GetAllPaginatedAsync<Specie>("/species/", pageNumber);
 
             return result;
         }
@@ -238,17 +204,17 @@ namespace SharpTrooper.Core
         /// <summary>
         /// get a specific starship resource
         /// </summary>
-        public Starship GetStarship(string id)
+        public async Task<Starship> GetStarshipAsync(string id)
         {
-            return GetSingle<Starship>("/starships/" + id);
+            return await GetSingleAsync<Starship>("/starships/" + id);
         }
 
         /// <summary>
         /// get all the starship resources
         /// </summary>
-        public SharpEntityResults<Starship> GetAllStarships(string pageNumber = "1")
+        public async Task<SharpEntityResults<Starship>> GetAllStarshipsAsync(string pageNumber = "1")
         {
-            SharpEntityResults<Starship> result = GetAllPaginated<Starship>("/starships/", pageNumber);
+            SharpEntityResults<Starship> result = await GetAllPaginatedAsync<Starship>("/starships/", pageNumber);
 
             return result;
         }
@@ -257,17 +223,17 @@ namespace SharpTrooper.Core
         /// <summary>
         /// get a specific vehicle resource
         /// </summary>
-        public Vehicle GetVehicle(string id)
+        public async Task<Vehicle> GetVehicleAsync(string id)
         {
-            return GetSingle<Vehicle>("/vehicles/" + id);
+            return await GetSingleAsync<Vehicle>("/vehicles/" + id);
         }
 
         /// <summary>
         /// get all the vehicle resources
         /// </summary>
-        public SharpEntityResults<Vehicle> GetAllVehicles(string pageNumber = "1")
+        public async Task<SharpEntityResults<Vehicle>> GetAllVehiclesAsync(string pageNumber = "1")
         {
-            SharpEntityResults<Vehicle> result = GetAllPaginated<Vehicle>("/vehicles/", pageNumber);
+            SharpEntityResults<Vehicle> result = await GetAllPaginatedAsync<Vehicle>("/vehicles/", pageNumber);
 
             return result;
         }
