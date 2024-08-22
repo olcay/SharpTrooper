@@ -6,6 +6,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpTrooper.Tests", "Sharp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpTrooper", "SharpTrooper\SharpTrooper.csproj", "{120A6FA4-2085-4185-8B2D-306C4769F6F5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpTrooper.Example", "SharpTrooper.Example\SharpTrooper.Example.csproj", "{5BD0FF6B-91FF-467D-9DE4-34ADE6CE0BAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{120A6FA4-2085-4185-8B2D-306C4769F6F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{120A6FA4-2085-4185-8B2D-306C4769F6F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{120A6FA4-2085-4185-8B2D-306C4769F6F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BD0FF6B-91FF-467D-9DE4-34ADE6CE0BAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BD0FF6B-91FF-467D-9DE4-34ADE6CE0BAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BD0FF6B-91FF-467D-9DE4-34ADE6CE0BAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BD0FF6B-91FF-467D-9DE4-34ADE6CE0BAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
