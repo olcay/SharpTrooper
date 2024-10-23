@@ -4,22 +4,30 @@ A C# helper library for [SWAPI](https://swapi.dev) - the Star Wars API
 
 ## Basic Usage
 
-All resources are accessible through the top-level SharpTrooperCore() methods:
+Register `SharpTrooperCore` to your services for Dependency Injection.
 
-`SharpTrooperCore core = new SharpTrooperCore();`
+https://github.com/olcay/SharpTrooper/blob/f67a48f0cac0d7bd62454ec63808dcf5fa640a9c/SharpTrooper.Example/Program.cs#L18-L31
 
 ## Methods
-```
-var planet = core.GetPlanet("1");
 
-var planets = core.GetAllPlanets();
+```csharp
+var films = await sharpTrooperService.GetAllFilmsAsync();
 
-...
+var people = await sharpTrooperService.GetAllPeopleAsync();
 
-var resourceFromUrl = core.GetSingleByUrl<People>(planet.residents[0]);
+var vehicles = await sharpTrooperService.GetAllVehiclesAsync();
+
+var species = await sharpTrooperService.GetAllSpeciesAsync();
+
+var planets = await sharpTrooperService.GetAllPlanetsAsync();
 ```
 
 For more info, visit the documentation of SWAPI: [SWAPI/Documentation](https://swapi.dev/documentation)
 
-or my personal blog post:
-[Otomatik Mühendis](http://otomatikmuhendis.com/2015/07/27/the-star-wars-api/)
+or my personal blog post: [The Star Wars API](https://olcay.dev/2021/08/01/the-star-wars-api/)
+
+## Contributors
+
+<a href="https://github.com/olcay/SharpTrooper/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=olcay/SharpTrooper" />
+</a>
